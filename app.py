@@ -9,21 +9,33 @@ topic = st.selectbox("Choose a topic", [
     "Climate Change", "Air Pollution", "Water Pollution", "Biodiversity",
     "Waste Management", "Renewable Energy", "Deforestation", "Water Conservation"
 ])
-num_q = st.slider("Number of questions", 3, 10, 5)
+num_q = st.slider("Number of questions", 3, 20, 5)
 difficulty = st.selectbox("Difficulty", ["Easy", "Medium", "Hard"])
 
 if "quiz" not in st.session_state:
     st.session_state.quiz = None
     st.session_state.answers = {}
     st.session_state.submitted = False
+    st.session_state.used_questions = []
 
 
-def generate_quiz(topic, num_q, difficulty):
+def generate_quiz(topic, num_q, difficulty, avoid_list):
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-flash-latest")
+    model = genai.GenerativeModel(
+        "gemini-flash-latest",
+        generation_config={"temperature": 1.0}
+    )
+    avoid_text = ""
+    if avoid_list:
+        avoid_text = (
+            "Do NOT repeat or closely rephrase any of these previously used questions:\n"
+            + "\n".join(f"- {q}" for q in avoid_list[-30:])
+        )
     prompt = f"""
     Generate {num_q} multiple-choice questions about {topic} in environmental science,
-    at {difficulty} difficulty level.
+    at {difficulty} difficulty level. Make them varied in angle (facts, causes, effects,
+    solutions, statistics, real-world examples) rather than the most obvious textbook question.
+    {avoid_text}
     Return ONLY valid JSON (no markdown, no extra text) in exactly this format:
     [
       {{
@@ -42,7 +54,12 @@ def generate_quiz(topic, num_q, difficulty):
 if st.button("Generate Quiz"):
     with st.spinner("Generating quiz..."):
         try:
-            st.session_state.quiz = generate_quiz(topic, num_q, difficulty)
+            st.session_state.quiz = generate_quiz(
+                topic, num_q, difficulty, st.session_state.used_questions
+            )
+            st.session_state.used_questions.extend(
+                q["question"] for q in st.session_state.quiz
+            )
             st.session_state.answers = {}
             st.session_state.submitted = False
         except Exception as e:
