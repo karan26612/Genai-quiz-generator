@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import json
 
-st.set_page_config(page_title="Terra Quiz", page_icon="🌿", layout="centered")
+st.set_page_config(page_title="EcoSpark", page_icon="🌿", layout="centered")
 
 # ---------- Visual theme ----------
 st.markdown("""
@@ -22,13 +22,13 @@ h1, h2, h3 { font-family: 'Fraunces', serif !important; }
 }
 .terra-hero h1 {
     color: #F0EDE4;
-    font-size: 2.1rem;
-    margin: 0 0 0.3rem 0;
+    font-size: 3rem;
+    margin: 0 0 0.4rem 0;
     line-height: 1.15;
 }
 .terra-hero p {
     color: #9FB8A6;
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     margin: 0;
 }
 
@@ -91,8 +91,8 @@ h1, h2, h3 { font-family: 'Fraunces', serif !important; }
 
 st.markdown("""
 <div class="terra-hero">
-    <h1>🌿 Terra Quiz</h1>
-    <p>AI-generated environmental science quizzes — a new set every time.</p>
+    <h1>🌿 EcoSpark</h1>
+    <p>Test your environmental science knowledge with a fresh quiz every time.</p>
 </div>
 """, unsafe_allow_html=True)
 
